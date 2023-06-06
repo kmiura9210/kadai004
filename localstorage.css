@@ -1,0 +1,44 @@
+#checkBox{
+    width: 30px;
+}
+
+#submitName{
+    width: 10000px;
+}
+
+#name{
+    width: 350px;
+}
+
+#pageNameArea, #urlArea, #list {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+
+    #list {
+        /* width: 100%; */
+        text-align: center;
+        border-collapse: collapse;
+        border-spacing: 0;
+        border: solid 1px #778ca3;
+       }
+       #list tr {
+        border-top: dashed 1px #778ca3;
+        text-align: left;
+       }
+       #list th {
+        padding: 10px;
+        background: #e9faf9;
+        text-align: center;
+       }
+
+       #submitName, th{
+        width: 50px;
+       }
+
+
+
+       #list td {
+        padding: 10px;
+       }

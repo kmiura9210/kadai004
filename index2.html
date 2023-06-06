@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="js/jquery-2.1.3.min.js"></script>
+    <title>お気に入りページ一括オープンツール</title>
+    <link rel="stylesheet" href="./localstorage.css" />
+    <style>
+      body {
+        width: 600px;
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>お気に入りページ一括オープンツール</h1>
+    <p>Local Storageに保存したお気に入りページを一括で開きます</p>
+    <input type="button" value="お気に入りページを開く" id="mybtn3" />
+
+    <!-- ページ名の入力 -->
+    <div id="pageNameArea">
+      <p>ページ名</p>
+      <input type="text" id="name" />
+      <!-- URLの入力 -->
+      <p>URL</p>
+      <textarea id="url" cols="50" rows="1"></textarea><br />
+      <button id="submit">新規登録</button>
+    </div>
+
+    <!-- ローカルストレージを表示する場所 -->
+    <table id="list">
+      <th id="checkBox"></th>
+      <th id="submitName">登録名</th>
+      <th id="url">URL</th>
+      <!-- ここに追加データが挿入される -->
+    </table>
+
+    <div>
+      <button id="clear">選択した項目を削除</button>
+      <button id="allClear">全削除</button>
+    </div>
+
+    <script>
+      // ローカルストレージにあるURLをタブで開くJS
+      //   localStorage.setItem(
+      //     "a",
+      //     "https://developer.mozilla.org/ja/docs/Web/API/Storage/length"
+      //   );
+      //   localStorage.setItem(
+      //     "b",
+      //     "https://www.javadrive.jp/javascript/webpage/index2.html"
+      //   );
+      //   localStorage.setItem("c", "https://zero-plus.io/media/jquery-event/");
+
+      let button3 = document.getElementById("mybtn3");
+      button3.addEventListener("click", () => {
+        const len = localStorage.length;
+        console.log(`length:${len}`);
+
+        for (let index = 0; index < len; index++) {
+          const key = localStorage.key(index);
+          console.log(key);
+          const url = localStorage.getItem(key);
+          console.log(url);
+          open(url);
+        }
+      });
+
+      // 新規登録を押したときのFunction
+      $("#submit").on("click", function () {
+        console.log("save");
+        const key = $("#name").val();
+        const value = $("#url").val();
+        console.log(key);
+        console.log(value);
+
+        // すでに登録してあるかを判定するためのフラグ
+        // 未登録 = 0（デフォルト）
+        // 登録済み = 1
+        let kizon = 0;
+
+        for (i = 0; i < localStorage.length; i++) {
+          const lsKey = localStorage.key(i);
+          const lsValue = localStorage.getItem(lsKey);
+
+          if (lsValue == value) {
+            console.log("success", "lsValueとValueの比較");
+            alert("すでに登録されています");
+            kizon = 1;
+          }
+        }
+
+        if (kizon == 0) {
+          localStorage.setItem(key, value);
+
+          const className = localStorage.length - 1;
+
+          const html = `
+            <tr>
+                <td><input type="checkbox" class="${className}"></td>
+                <td>${key}</td>
+                <td>${value}</td>
+            </tr>`;
+          $("#list").append(html);
+        }
+
+        // フラグをリセット
+        kizon = 0;
+      });
+
+      // 選択したkeyのローカルストレージをクリアするボタン
+      $("#clear").on("click", function () {
+        console.log("clear");
+
+        let lsLength = localStorage.length;
+
+        for (i = lsLength - 1; i > -1; i--) {
+          //   for (i = 0; i < lsLength; i++) {
+          const keyName = localStorage.key(i);
+          console.log(keyName, "key name");
+          const value = localStorage.getItem(keyName);
+          console.log(value, "value");
+
+          if ($("." + i).prop("checked") == true) {
+            console.log($("." + i).prop("checked"), i + "の値、削除");
+            localStorage.removeItem(keyName);
+          } else {
+            console.log($("." + i).prop("checked"), i + "の値、そのまま");
+          }
+        }
+
+        $("#list tr td").empty();
+
+        for (i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          const value = localStorage.getItem(key);
+
+          const html = `
+        <tr>
+          <td><input type="checkbox" class="${i}"></td>
+          <td>${key}</td>
+          <td>${value}</td>
+        </tr>`;
+          $("#list").append(html);
+        }
+        location.reload()
+      });
+
+      // localStorageをクリアするボタン
+      $("#allClear").on("click", function () {
+        localStorage.clear();
+        $("#list tr td").empty();
+        location.reload()
+      });
+
+      // ページデータ取得、保存データ取得表示
+      for (i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+
+        const html = `
+        <tr>
+          <td><input type="checkbox" class="${i}"></td>
+          <td>${key}</td>
+          <td>${value}</td>
+        </tr>`;
+        $("#list").append(html);
+      }
+    </script>
+  </body>
+</html>
